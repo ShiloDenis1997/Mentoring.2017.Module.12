@@ -3,7 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorthwindLibrary", "NorthwindLibrary\NorthwindLibrary.csproj", "{83072721-060E-4738-9ABD-7711C4F07ED2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CachingSolutionsSamples", "CachingSolutionsSamples\CachingSolutionsSamples.csproj", "{A4A4F6AE-04DA-439D-BFAD-BC373D9C869C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cache.Infrastructure", "Cache.Infrastructure\Cache.Infrastructure.csproj", "{F7ABC83B-F9E9-4FCB-9979-23DFB1741C2F}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83072721-060E-4738-9ABD-7711C4F07ED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83072721-060E-4738-9ABD-7711C4F07ED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83072721-060E-4738-9ABD-7711C4F07ED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83072721-060E-4738-9ABD-7711C4F07ED2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4A4F6AE-04DA-439D-BFAD-BC373D9C869C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4A4F6AE-04DA-439D-BFAD-BC373D9C869C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4A4F6AE-04DA-439D-BFAD-BC373D9C869C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4A4F6AE-04DA-439D-BFAD-BC373D9C869C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7ABC83B-F9E9-4FCB-9979-23DFB1741C2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7ABC83B-F9E9-4FCB-9979-23DFB1741C2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7ABC83B-F9E9-4FCB-9979-23DFB1741C2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7ABC83B-F9E9-4FCB-9979-23DFB1741C2F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
