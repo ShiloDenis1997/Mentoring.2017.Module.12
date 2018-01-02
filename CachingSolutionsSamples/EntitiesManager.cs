@@ -1,18 +1,19 @@
-﻿using System;
+﻿using Cache.Infrastructure;
+using NorthwindLibrary;
+using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Linq;
 
-namespace Cache.Infrastructure
+namespace CachingSolutionsSamples
 {
     public class EntitiesManager<T> where T: class
     {
-        private readonly IEntitiesCache<T> _cache;
-        private readonly IEntitiesNoCache _noCache;
+        private readonly ICache<IEnumerable<T>> _cache;
 
-        public EntitiesManager(IEntitiesCache<T> cache, IEntitiesNoCache noCache)
+        public EntitiesManager(ICache<IEnumerable<T>> cache)
         {
             _cache = cache;
-            _noCache = noCache;
         }
 
         public IEnumerable<T> GetEntities()
@@ -24,10 +25,14 @@ namespace Cache.Infrastructure
             if (entities == null)
             {
                 Console.WriteLine("From no cache storage");
-                entities = _noCache.Get<T>();
+                using (var dbContext = new Northwind())
+                {
+                    dbContext.Configuration.LazyLoadingEnabled = false;
+                    dbContext.Configuration.ProxyCreationEnabled = false;
+                    entities = dbContext.Set<T>().ToList();
+                }
                 _cache.Set(user, entities);
             }
-
             return entities;
         }
     }
