@@ -1,8 +1,6 @@
 ﻿using Cache.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace CachingSolutionsSamples
@@ -10,7 +8,7 @@ namespace CachingSolutionsSamples
     [TestClass]
     public class Task1Tests
     {
-        private readonly string _fibonacciPrefix = "fibonacci";
+        private readonly string _fibonacciPrefix = "_fibonacci";
 
         [TestMethod]
         public void FibonacciMemoryCache()

@@ -5,6 +5,10 @@ using System.Threading;
 using Cache.Infrastructure;
 using NorthwindLibrary;
 using System.Collections.Generic;
+using System.Runtime.Caching;
+using System.Data.SqlClient;
+using System.Collections.Specialized;
+using System.Configuration;
 
 namespace CachingSolutionsSamples
 {
@@ -18,11 +22,11 @@ namespace CachingSolutionsSamples
         [TestMethod]
         public void CategoriesMemoryCache()
         {
-            var categoryManager = new EntitiesManager<Category>(new MemoryCache<IEnumerable<Category>>(_categoriesPrefix));
+            var entitiesManager = new EntitiesManager<Category>(new MemoryCache<IEnumerable<Category>>(_categoriesPrefix));
 
             for (var i = 0; i < 10; i++)
             {
-                Console.WriteLine(categoryManager.GetEntities().Count());
+                Console.WriteLine(entitiesManager.GetEntities().Count());
                 Thread.Sleep(100);
             }
         }
@@ -30,11 +34,11 @@ namespace CachingSolutionsSamples
         [TestMethod]
         public void CategoriesRedisCache()
         {
-            var categoryManager = new EntitiesManager<Category>(new RedisCache<IEnumerable<Category>>("localhost", _categoriesPrefix));
+            var entitiesManager = new EntitiesManager<Category>(new RedisCache<IEnumerable<Category>>("localhost", _categoriesPrefix));
             
             for (var i = 0; i < 10; i++)
             {
-                Console.WriteLine(categoryManager.GetEntities().Count());
+                Console.WriteLine(entitiesManager.GetEntities().Count());
                 Thread.Sleep(100);
             }
         }
@@ -42,11 +46,11 @@ namespace CachingSolutionsSamples
         [TestMethod]
         public void CustomersMemoryCache()
         {
-            var categoryManager = new EntitiesManager<Customer>(new MemoryCache<IEnumerable<Customer>>(_customersPrefix));
+            var entitiesManager = new EntitiesManager<Customer>(new MemoryCache<IEnumerable<Customer>>(_customersPrefix));
 
             for (var i = 0; i < 10; i++)
             {
-                Console.WriteLine(categoryManager.GetEntities().Count());
+                Console.WriteLine(entitiesManager.GetEntities().Count());
                 Thread.Sleep(100);
             }
         }
@@ -54,11 +58,11 @@ namespace CachingSolutionsSamples
         [TestMethod]
         public void CustomersRedisCache()
         {
-            var categoryManager = new EntitiesManager<Customer>(new RedisCache<IEnumerable<Customer>>("localhost", _customersPrefix));
+            var entitiesManager = new EntitiesManager<Customer>(new RedisCache<IEnumerable<Customer>>("localhost", _customersPrefix));
 
             for (var i = 0; i < 10; i++)
             {
-                Console.WriteLine(categoryManager.GetEntities().Count());
+                Console.WriteLine(entitiesManager.GetEntities().Count());
                 Thread.Sleep(100);
             }
         }
@@ -66,11 +70,11 @@ namespace CachingSolutionsSamples
         [TestMethod]
         public void SuppliersMemoryCache()
         {
-            var categoryManager = new EntitiesManager<Supplier>(new MemoryCache<IEnumerable<Supplier>>(_suppliersPrefix));
+            var entitiesManager = new EntitiesManager<Supplier>(new MemoryCache<IEnumerable<Supplier>>(_suppliersPrefix));
 
             for (var i = 0; i < 10; i++)
             {
-                Console.WriteLine(categoryManager.GetEntities().Count());
+                Console.WriteLine(entitiesManager.GetEntities().Count());
                 Thread.Sleep(100);
             }
         }
@@ -78,12 +82,41 @@ namespace CachingSolutionsSamples
         [TestMethod]
         public void SuppliersRedisCache()
         {
-            var categoryManager = new EntitiesManager<Supplier>(new RedisCache<IEnumerable<Supplier>>("localhost", _suppliersPrefix));
+            var entitiesManager = new EntitiesManager<Supplier>(new RedisCache<IEnumerable<Supplier>>("localhost", _suppliersPrefix));
 
             for (var i = 0; i < 10; i++)
             {
-                Console.WriteLine(categoryManager.GetEntities().Count());
+                Console.WriteLine(entitiesManager.GetEntities().Count());
                 Thread.Sleep(100);
+            }
+        }
+
+        [TestMethod]
+        public void SqlMonitorsTest()
+        {
+            string connectionString =  ConfigurationManager.ConnectionStrings["Northwind"].ConnectionString;
+            SqlDependency.Start(connectionString);
+            var entitiesManager = new MemoryEntitiesManager<Supplier>(new MemoryCache<IEnumerable<Supplier>>(_suppliersPrefix));
+            for (var i = 0; i < 10; i++)
+            {
+                CacheItemPolicy policy = new CacheItemPolicy
+                {
+                    ChangeMonitors = { GetMonitor("select [SupplierID],[CompanyName],[ContactName],[ContactTitle],[Address],[City],[Region],[PostalCode],[Country],[Phone],[Fax] from [dbo].[Suppliers]", connectionString) }
+                };
+                Console.WriteLine(entitiesManager.GetEntities(policy).Count());
+                Thread.Sleep(1000);
+            }
+        }
+
+        private SqlChangeMonitor GetMonitor(string query, string connectionString)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand(query, connection);
+                var monitor = new SqlChangeMonitor(new SqlDependency(command));
+                using (var reader = command.ExecuteReader()) { };
+                return monitor;
             }
         }
     }

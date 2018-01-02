@@ -2,21 +2,24 @@
 using NorthwindLibrary;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Linq;
+using System.Runtime.Caching;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CachingSolutionsSamples
 {
-    public class EntitiesManager<T> where T: class
+    public class MemoryEntitiesManager<T> where T : class
     {
-        private readonly ICache<IEnumerable<T>> _cache;
+        private readonly MemoryCache<IEnumerable<T>> _cache;
 
-        public EntitiesManager(ICache<IEnumerable<T>> cache)
+        public MemoryEntitiesManager(MemoryCache<IEnumerable<T>> cache)
         {
             _cache = cache;
         }
 
-        public IEnumerable<T> GetEntities()
+        public IEnumerable<T> GetEntities(CacheItemPolicy cachePolicy)
         {
             Console.WriteLine("Get Entities");
             var user = Thread.CurrentPrincipal.Identity.Name;
@@ -32,7 +35,7 @@ namespace CachingSolutionsSamples
                     entities = dbContext.Set<T>().ToList();
                 }
 
-                _cache.Set(user, entities, DateTimeOffset.Now.AddDays(1));
+                _cache.Set(user, entities, cachePolicy);
             }
             return entities;
         }

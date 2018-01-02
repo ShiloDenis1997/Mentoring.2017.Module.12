@@ -1,9 +1,5 @@
 ﻿using Cache.Infrastructure;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CachingSolutionsSamples
 {
@@ -37,7 +33,7 @@ namespace CachingSolutionsSamples
 
             int result = ComputeFibonacci(index - 1) + ComputeFibonacci(index - 2);
             Console.WriteLine($"Computed: {result}");
-            _cache.Set(index.ToString(), result);
+            _cache.Set(index.ToString(), result, DateTimeOffset.Now.AddMilliseconds(300));
             return result;
         }
     }

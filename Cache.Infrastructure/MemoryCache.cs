@@ -1,4 +1,5 @@
-﻿using System.Runtime.Caching;
+﻿using System;
+using System.Runtime.Caching;
 
 namespace Cache.Infrastructure
 {
@@ -23,9 +24,14 @@ namespace Cache.Infrastructure
             return (T)fromCache;
         }
 
-        public void Set(string key, T value)
+        public void Set(string key, T value, DateTimeOffset expirationDate)
         {
-            _cache.Set(_prefix + key, value, ObjectCache.InfiniteAbsoluteExpiration);
+            _cache.Set(_prefix + key, value, expirationDate);
+        }
+
+        public void Set(string key, T value, CacheItemPolicy policy)
+        {
+            _cache.Set(_prefix + key, value, policy);
         }
     }
 }

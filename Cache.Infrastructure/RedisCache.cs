@@ -1,4 +1,5 @@
 ﻿using StackExchange.Redis;
+using System;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -34,7 +35,7 @@ namespace Cache.Infrastructure
             return (T)_serializer.ReadObject(new MemoryStream(s));
         }
 
-        public void Set(string key, T value)
+        public void Set(string key, T value, DateTimeOffset expirationDate)
         {
             var db = _redisConnection.GetDatabase();
             var redisKey = _prefix + key;
@@ -47,7 +48,7 @@ namespace Cache.Infrastructure
             {
                 var stream = new MemoryStream();
                 _serializer.WriteObject(stream, value);
-                db.StringSet(redisKey, stream.ToArray());
+                db.StringSet(redisKey, stream.ToArray(), expirationDate - DateTimeOffset.Now);
             }
         }
     }
