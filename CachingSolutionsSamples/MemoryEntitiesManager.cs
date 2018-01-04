@@ -59,7 +59,7 @@ namespace CachingSolutionsSamples
                 connection.Open();
                 var command = new SqlCommand(query, connection);
                 var monitor = new SqlChangeMonitor(new SqlDependency(command));
-                using (var reader = command.ExecuteReader()) { };
+                command.ExecuteNonQuery();
                 return monitor;
             }
         }
