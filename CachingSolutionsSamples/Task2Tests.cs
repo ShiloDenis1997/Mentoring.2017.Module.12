@@ -94,30 +94,15 @@ namespace CachingSolutionsSamples
         [TestMethod]
         public void SqlMonitorsTest()
         {
-            string connectionString =  ConfigurationManager.ConnectionStrings["Northwind"].ConnectionString;
-            SqlDependency.Start(connectionString);
-            var entitiesManager = new MemoryEntitiesManager<Supplier>(new MemoryCache<IEnumerable<Supplier>>(_suppliersPrefix));
+            var entitiesManager = new MemoryEntitiesManager<Supplier>(new MemoryCache<IEnumerable<Supplier>>(_suppliersPrefix), 
+                "select [SupplierID],[CompanyName],[ContactName],[ContactTitle],[Address],[City],[Region],[PostalCode],[Country],[Phone],[Fax] from [dbo].[Suppliers]");
             for (var i = 0; i < 10; i++)
             {
-                CacheItemPolicy policy = new CacheItemPolicy
-                {
-                    ChangeMonitors = { GetMonitor("select [SupplierID],[CompanyName],[ContactName],[ContactTitle],[Address],[City],[Region],[PostalCode],[Country],[Phone],[Fax] from [dbo].[Suppliers]", connectionString) }
-                };
-                Console.WriteLine(entitiesManager.GetEntities(policy).Count());
+                Console.WriteLine(entitiesManager.GetEntities().Count());
                 Thread.Sleep(1000);
             }
         }
 
-        private SqlChangeMonitor GetMonitor(string query, string connectionString)
-        {
-            using (var connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                var command = new SqlCommand(query, connection);
-                var monitor = new SqlChangeMonitor(new SqlDependency(command));
-                using (var reader = command.ExecuteReader()) { };
-                return monitor;
-            }
-        }
+        
     }
 }
